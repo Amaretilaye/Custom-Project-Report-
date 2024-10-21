@@ -1,0 +1,35 @@
+<odoo>
+    <data>
+        <record id="project_report_form" model="ir.ui.view">
+            <field name="name">project.detail.form</field>
+            <field name="model">project.detail</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <group>
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group>
+                            <field name="project"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Generate Report" name="generate_project_report" type="object" class="btn-primary"/>
+                        <button string="Cancel" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="pb_report_action" model="ir.actions.act_window">
+            <field name="name">Project Detail Report</field>
+            <field name="res_model">project.detail</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="project_report_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_project_report" name="Project Report" parent="project.menu_project_report" action="pb_report_action" groups="project.group_project_manager"/>
+    </data>
+</odoo>

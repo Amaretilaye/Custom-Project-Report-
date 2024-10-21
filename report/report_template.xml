@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="pb_report_report" model="ir.actions.report">
+            <field name="name">project_Report</field>
+            <field name="model">project.detail</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">pb_project_report.project_report</field>
+            <field name="report_file">pb_project_report.project_report</field>
+            <field name="print_report_name">'Project Report'</field>
+            <field name="binding_model_id" ref="model_project_detail"/>
+        </record>
+
+        <record id="paperformat_project_report" model="report.paperformat">
+            <field name="name">Project Report Landscape</field>
+            <field name="default" eval="True"/>
+            <field name="format">custom</field>
+            <field name="page_height">297</field>
+            <field name="page_width">210</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">10</field>
+            <field name="margin_left">10</field>
+            <field name="margin_right">10</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">10</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <template id="project_report">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <style>
+                        /* Define landscape layout */
+                        @page {
+                            size: A4 landscape;
+                            margin: 0;
+                        }
+
+                        /* Apply rotation */
+                        .rotate-90 {
+                            transform: rotate(-180deg) translateX(-100%);
+                            transform-origin: top left;
+                            width: 100vh;
+                            overflow-x: hidden;
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+
+                        }
+
+                        /* Table styling */
+                        .rotate-90 table {
+                            width: 100%;
+                            border-collapse: collapse;
+                        }
+
+                        .rotate-90 th, .rotate-90 td {
+                            border: 1px solid black;
+                            padding: 5px;
+                            text-align: left;
+                        }
+
+                        /* Adjust spacing */
+                        .rotate-90 table {
+                            margin-bottom: 10px;
+                        }
+                    </style>
+                    <div class="rotate-90">
+                        <t t-foreach="docs" t-as="doc">
+                            <h2><span t-field="doc.date_to"/> Project Report</h2>
+                            <hr/>
+                            <table>
+                                 <thead style="color: black">
+                                     <tr>
+                                         <th rowspan="2">SN</th>
+                                         <th rowspan="2">Project Id</th>
+                                         <th rowspan="2">Department/Contract</th>
+                                         <th rowspan="2">Project</th>
+                                         <th colspan="3">BUDGET</th>
+                                         <th colspan="3">TIME</th>
+                                         <th colspan="2">MILESTONE</th>
+                                         <th rowspan="2">Progress</th>
+                                         <th rowspan="2">Status</th>
+                                     </tr>
+                                     <tr>
+                                         <th>Allocated</th>
+                                         <th>Expense</th>
+                                         <th>Remaining</th>
+                                         <th>Duration</th>
+                                         <th>UsedDate</th>
+                                         <th>Remaining Date</th>
+                                         <th>Completed</th>
+                                         <th>Remaining</th>
+                                     </tr>
+                                 </thead>
+
+                                <tbody>
+                                    <t t-foreach="doc.project_report()['orders']" t-as="order">
+                                        <tr>
+                                            <td><span t-esc="order_index + 1"/></td>
+                                            <td><t t-esc="order.project_id"/></td>
+                                            <td><t t-esc="order.department_id.name"/></td>
+                                            <td><t t-esc="order.display_name"/></td>
+                                            <td>$<t t-esc="order.budget_allocation"/></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td><t t-esc="order.project_duration"/> Days</td>
+                                            <td><t t-esc="order.used_days"/> Days</td>
+                                            <td><t t-esc="order.remaining_days"/> Days</td>
+                                            <td><t t-esc="order.completed_milestone"/></td>
+                                            <td><t t-esc="order.remaining_milestone"/></td>
+                                            <td><t t-esc="order.development"/>%</td>
+                                            <td><t t-esc="order.tag_names"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
